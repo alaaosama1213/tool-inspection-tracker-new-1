@@ -49,7 +49,7 @@ Add these environment variables when prompted:
 4. Adjust height to 1200px
 5. Save and publish
 
-📖 **Full SharePoint guide in**: `DEPLOYMENT_GUIDE.md`
+📖 **Complete SharePoint integration guide**: `SHAREPOINT_INTEGRATION.md`
 
 ## Project Structure
 
@@ -227,6 +227,7 @@ See Supabase documentation for authentication setup.
 - `README.md` (this file) - Project overview
 - `QUICK_START.md` - Fast deployment guide
 - `DEPLOYMENT_GUIDE.md` - Comprehensive deployment instructions
+- `SHAREPOINT_INTEGRATION.md` - Complete Vercel + SharePoint setup guide
 - `SUPABASE_STORAGE_SETUP.md` - Storage bucket configuration
 - `sharepoint-embed-example.html` - SharePoint embedding template
 
