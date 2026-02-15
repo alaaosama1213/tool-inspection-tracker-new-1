@@ -5,11 +5,12 @@ A comprehensive barcode-based tool inspection system with photo management, perf
 ## Features
 
 - **Tool Registration**: Add tools with photos, categories, and serial numbers
-- **Automatic Barcode Generation**: Unique barcode for each tool
-- **Barcode Scanning**: Instant tool lookup via barcode
+- **Automatic Barcode Generation**: Unique CODE128 barcode for each tool
+- **Scannable Barcodes**: Real scannable barcodes compatible with standard barcode scanners
+- **Barcode Scanning**: Instant tool lookup via barcode scanner or manual entry
 - **Inspection Tracking**: Record inspections with status, photos, and notes
 - **Inspection History**: Complete audit trail for each tool
-- **Printable Labels**: Generate and print barcode labels
+- **Printable Labels**: Generate, print, and download barcode labels
 - **Photo Management**: Attach photos to tools and inspections
 - **SharePoint Ready**: Optimized for SharePoint embedding
 
@@ -146,8 +147,10 @@ See `DEPLOYMENT_GUIDE.md` for detailed instructions.
 ### 2. Print Barcode Label
 - Go to "All Tools" tab
 - Click "View Barcode" on any tool
-- Print or download the barcode label
+- View the scannable CODE128 barcode
+- Print or download the barcode label as PNG
 - Attach label to physical tool
+- Use any standard barcode scanner to scan
 
 ### 3. Scan/Verify Tool
 - Go to "Scan Barcode" tab
@@ -199,6 +202,8 @@ See Supabase documentation for authentication setup.
 - Check browser console for errors
 - Verify database connection
 - Ensure tools table has proper permissions
+- Barcode uses CODE128 format (industry standard)
+- Compatible with all standard barcode scanners
 
 ### Database Connection Errors
 - Verify environment variables are correct
@@ -219,6 +224,7 @@ See Supabase documentation for authentication setup.
 - **Build Tool**: Vite
 - **Database**: Supabase (PostgreSQL)
 - **Storage**: Supabase Storage
+- **Barcode**: JsBarcode (CODE128 format)
 - **Icons**: Lucide React
 - **Hosting**: Vercel/Netlify/Azure
 
@@ -228,6 +234,7 @@ See Supabase documentation for authentication setup.
 - `QUICK_START.md` - Fast deployment guide
 - `DEPLOYMENT_GUIDE.md` - Comprehensive deployment instructions
 - `SHAREPOINT_INTEGRATION.md` - Complete Vercel + SharePoint setup guide
+- `BARCODE_INFO.md` - Complete barcode system guide and scanner compatibility
 - `SUPABASE_STORAGE_SETUP.md` - Storage bucket configuration
 - `sharepoint-embed-example.html` - SharePoint embedding template
 

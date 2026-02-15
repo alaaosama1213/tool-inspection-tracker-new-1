@@ -1,6 +1,7 @@
 import { Tool } from '../lib/supabase';
 import { X, Printer, Download } from 'lucide-react';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
+import JsBarcode from 'jsbarcode';
 
 interface BarcodeDisplayProps {
   tool: Tool;
@@ -9,36 +10,80 @@ interface BarcodeDisplayProps {
 
 export default function BarcodeDisplay({ tool, onClose }: BarcodeDisplayProps) {
   const barcodeRef = useRef<HTMLDivElement>(null);
+  const barcodeSvgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    if (barcodeSvgRef.current) {
+      try {
+        JsBarcode(barcodeSvgRef.current, tool.barcode, {
+          format: 'CODE128',
+          width: 2,
+          height: 80,
+          displayValue: true,
+          fontSize: 16,
+          margin: 10,
+          background: '#ffffff',
+          lineColor: '#000000',
+        });
+      } catch (error) {
+        console.error('Error generating barcode:', error);
+      }
+    }
+  }, [tool.barcode]);
 
   const handlePrint = () => {
     window.print();
   };
 
   const handleDownload = () => {
-    if (barcodeRef.current) {
+    if (barcodeRef.current && barcodeSvgRef.current) {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      const content = barcodeRef.current;
 
-      canvas.width = content.offsetWidth * 2;
-      canvas.height = content.offsetHeight * 2;
+      canvas.width = 800;
+      canvas.height = 500;
 
       if (ctx) {
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.font = 'bold 32px monospace';
-        ctx.fillStyle = 'black';
+        ctx.font = '14px sans-serif';
+        ctx.fillStyle = '#666';
         ctx.textAlign = 'center';
-        ctx.fillText(tool.barcode, canvas.width / 2, canvas.height / 2 - 40);
+        ctx.fillText('TOOL INSPECTION', canvas.width / 2, 40);
 
-        ctx.font = '24px sans-serif';
-        ctx.fillText(tool.name, canvas.width / 2, canvas.height / 2 + 20);
+        ctx.font = 'bold 24px sans-serif';
+        ctx.fillStyle = '#000';
+        ctx.fillText(tool.name, canvas.width / 2, 75);
 
-        const link = document.createElement('a');
-        link.download = `barcode-${tool.barcode}.png`;
-        link.href = canvas.toDataURL();
-        link.click();
+        const svgData = new XMLSerializer().serializeToString(barcodeSvgRef.current);
+        const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const svgUrl = URL.createObjectURL(svgBlob);
+        const img = new Image();
+
+        img.onload = () => {
+          ctx.drawImage(img, (canvas.width - img.width) / 2, 110);
+
+          ctx.font = '14px sans-serif';
+          ctx.fillStyle = '#666';
+          ctx.fillText(`Category: ${tool.category}`, canvas.width / 2, 280);
+          if (tool.serial_number) {
+            ctx.fillText(`S/N: ${tool.serial_number}`, canvas.width / 2, 310);
+          }
+
+          ctx.font = '12px sans-serif';
+          ctx.fillStyle = '#999';
+          ctx.fillText('Scan this barcode to verify tool', canvas.width / 2, 350);
+
+          const link = document.createElement('a');
+          link.download = `barcode-${tool.barcode}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+
+          URL.revokeObjectURL(svgUrl);
+        };
+
+        img.src = svgUrl;
       }
     }
   };
@@ -67,17 +112,15 @@ export default function BarcodeDisplay({ tool, onClose }: BarcodeDisplayProps) {
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">{tool.name}</h3>
               </div>
 
-              <div className="bg-white border-2 border-gray-300 rounded p-4 mb-4">
-                <div className="font-mono text-2xl font-bold text-gray-900 break-all leading-relaxed tracking-wide">
-                  {tool.barcode}
-                </div>
+              <div className="bg-white border-2 border-gray-300 rounded-lg p-6 mb-4 flex justify-center">
+                <svg ref={barcodeSvgRef}></svg>
               </div>
 
               <div className="space-y-1 text-sm text-gray-600">
                 <p>Category: {tool.category}</p>
                 {tool.serial_number && <p>S/N: {tool.serial_number}</p>}
                 <p className="text-xs text-gray-500 mt-2">
-                  Scan or enter this barcode to verify
+                  Scan this barcode to verify tool
                 </p>
               </div>
             </div>
